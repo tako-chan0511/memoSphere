@@ -1,30 +1,25 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import MemoForm from './components/MemoForm.vue';
+import MemoBoard from './components/MemoBoard.vue'; // MemoListから変更
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div id="app">
+    <h1>MemoSphere</h1>
+    <MemoForm />
+    <hr />
+    <MemoBoard />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<style>
+/* ... スタイルは変更なし ... */
+#app {
+  max-width: 800px; /* ボード表示のため少し幅を広げる */
+  margin: 0 auto;
+  padding: 20px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+hr {
+  margin: 20px 0;
 }
 </style>

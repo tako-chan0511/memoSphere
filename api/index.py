@@ -1,7 +1,11 @@
 from fastapi import FastAPI
+from api.routers import memos
+from api import models
+from api.db import engine
+
+# データベースのテーブルを初回作成
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-@app.get("/api/hello")
-def hello_world():
-    return {"message": "Hello from FastAPI!"}
+app.include_router(memos.router)
