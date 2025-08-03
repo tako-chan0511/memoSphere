@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import MemoCard from './MemoCard.vue';
+import draggable from 'vuedraggable';
 
 interface Memo {
   id: number;
@@ -54,7 +55,6 @@ const handleUpdateMemo = async (updatedData: { id: number, task: string }) => {
   }
 };
 
-// ★ここから追加
 const handleChangeStatus = async ({ id, newStatus }: { id: number, newStatus: string }) => {
   try {
     const response = await fetch(`/api/memos/${id}`, {
@@ -63,8 +63,6 @@ const handleChangeStatus = async ({ id, newStatus }: { id: number, newStatus: st
       body: JSON.stringify({ status: newStatus }),
     });
     if (!response.ok) throw new Error('Failed to change status');
-    
-    // APIでの更新が成功したら、ローカルのデータも更新して即座にUIに反映
     const index = memos.value.findIndex(memo => memo.id === id);
     if (index !== -1) {
       memos.value[index].status = newStatus;
@@ -73,9 +71,13 @@ const handleChangeStatus = async ({ id, newStatus }: { id: number, newStatus: st
     console.error(error);
   }
 };
-// ★ここまで追加
 
 onMounted(fetchMemos);
+
+// ★ここを追加: 親コンポーネントからこの関数を呼び出せるようにする
+defineExpose({
+  fetchMemos
+});
 </script>
 
 <template>
@@ -83,45 +85,62 @@ onMounted(fetchMemos);
     <!-- To Do Column -->
     <div class="column">
       <h2 class="column-header">To Do</h2>
-      <div class="card-list">
-        <MemoCard
-          v-for="memo in todoMemos"
-          :key="memo.id"
-          :memo="memo"
-          @delete="handleDeleteMemo"
-          @update="handleUpdateMemo"
-          @change-status="handleChangeStatus"
-        />
-      </div>
+      <draggable
+        class="card-list"
+        :list="todoMemos"
+        group="memos"
+        item-key="id"
+      >
+        <template #item="{ element: memo }">
+          <MemoCard
+            :memo="memo"
+            @delete="handleDeleteMemo"
+            @update="handleUpdateMemo"
+            @change-status="handleChangeStatus"
+          />
+        </template>
+      </draggable>
     </div>
 
     <!-- In Progress Column -->
     <div class="column">
       <h2 class="column-header">In Progress</h2>
-      <div class="card-list">
-        <MemoCard
-          v-for="memo in inProgressMemos"
-          :key="memo.id"
-          :memo="memo"
-          @delete="handleDeleteMemo"
-          @update="handleUpdateMemo"
-          @change-status="handleChangeStatus"
-        />
-      </div>
+      <draggable
+        class="card-list"
+        :list="inProgressMemos"
+        group="memos"
+        item-key="id"
+      >
+        <template #item="{ element: memo }">
+          <MemoCard
+            :memo="memo"
+            @delete="handleDeleteMemo"
+            @update="handleUpdateMemo"
+            @change-status="handleChangeStatus"
+          />
+        </template>
+      </draggable>
     </div>
 
     <!-- Done Column -->
     <div class="column">
       <h2 class="column-header">Done</h2>
        <div class="card-list">
-        <MemoCard
-          v-for="memo in doneMemos"
-          :key="memo.id"
-          :memo="memo"
-          @delete="handleDeleteMemo"
-          @update="handleUpdateMemo"
-          @change-status="handleChangeStatus"
-        />
+        <draggable
+          class="card-list"
+          :list="doneMemos"
+          group="memos"
+          item-key="id"
+        >
+          <template #item="{ element: memo }">
+            <MemoCard
+              :memo="memo"
+              @delete="handleDeleteMemo"
+              @update="handleUpdateMemo"
+              @change-status="handleChangeStatus"
+            />
+          </template>
+        </draggable>
       </div>
     </div>
   </div>

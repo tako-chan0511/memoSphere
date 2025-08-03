@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+// 親コンポーネントにイベントを通知するための`emit`を定義
+const emit = defineEmits(['memo-added']);
+
 const newTask = ref('');
 
 const addMemo = async () => {
@@ -19,9 +22,8 @@ const addMemo = async () => {
     // 追加成功後、入力欄をクリア
     newTask.value = '';
     
-    // ここで親コンポーネントにリスト更新を通知するのが一般的ですが、
-    // 今回はシンプルにするため、ひとまずページリロードで対応します。
-    window.location.reload();
+    // 親コンポーネントに`memo-added`イベントを通知
+    emit('memo-added');
 
   } catch (error) {
     console.error(error);
@@ -38,3 +40,19 @@ const addMemo = async () => {
     </form>
   </div>
 </template>
+
+<style scoped>
+/* スタイルは任意で調整してください */
+input {
+  padding: 8px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+button {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>
